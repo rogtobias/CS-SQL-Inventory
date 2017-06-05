@@ -1,0 +1,10 @@
+<h1>Your beers:</h1>
+
+<ul>
+  @foreach(var beer in @Model)
+  {
+    <li><a href="/view_all/@beer.GetId()">@beer.GetBeerName()</a></li>
+  }
+</ul>
+
+<p><a href="/">Add another beer</a></p>

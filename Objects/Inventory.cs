@@ -16,6 +16,19 @@ namespace Inventory
       _id = Id;
 
     }
+    public string GetBeerName()
+    {
+      return _beerName;
+    }
+    public void SetBeerName(string beerName)
+    {
+      _beerName = beerName;
+    }
+    public int GetId()
+    {
+      return _id;
+    }
+
     public override bool Equals(System.Object otherInventory)
     {
       if (!(otherInventory is Inventory))
@@ -30,6 +43,7 @@ namespace Inventory
         return (idEquality && descriptionEquality);
       }
     }
+
     public void Save()
     {
       SqlConnection conn = DB.Connection();
@@ -56,18 +70,7 @@ namespace Inventory
         conn.Close();
       }
     }
-    public string GetBeerName()
-    {
-      return _beerName;
-    }
-    public void SetBeerName(string beerName)
-    {
-      _beerName = beerName;
-    }
-    public int GetId()
-    {
-      return _id;
-    }
+
     public static void DeleteAll()
     {
       SqlConnection conn = DB.Connection();
@@ -76,6 +79,7 @@ namespace Inventory
       cmd.ExecuteNonQuery();
       conn.Close();
     }
+
     public static List<Inventory> GetAll()
     {
       List<Inventory> allInventories = new List<Inventory>{};
@@ -93,7 +97,6 @@ namespace Inventory
         Inventory newInventory = new Inventory(beerName, inventoryId);
         allInventories.Add(newInventory);
       }
-
       if(rdr != null)
       {
         rdr.Close();
@@ -104,6 +107,7 @@ namespace Inventory
       }
       return allInventories;
     }
+
     public static Inventory Find(int id)
     {
       SqlConnection conn = DB.Connection();
