@@ -18,6 +18,7 @@ namespace Inventory
       int result = Inventory.GetAll().Count;
       Assert.Equal(0, result);
     }
+
     [Fact]
     public void Test_Equal_ReturnsTrueIfBeersAreTheSame()
     {
@@ -28,6 +29,7 @@ namespace Inventory
       //Assert
       Assert.Equal(firstInventory, secondInventory);
     }
+
     [Fact]
     public void Test_Save_SaveToDatabase()
     {
@@ -42,6 +44,7 @@ namespace Inventory
       //Assert
       Assert.Equal(testList, result);
     }
+
     [Fact]
     public void Test_Save_AssignsIdToObject()
     {
@@ -56,6 +59,15 @@ namespace Inventory
 
       //Assert
       Assert.Equal(testId, result);
+    }
+
+    [Fact]
+    public void Test_Find_FindsInventoryInDB()
+    {
+      Inventory testInventory = new Inventory("Brown Butte Porter");
+      testInventory.Save();
+      Inventory foundInventory = Inventory.Find(testInventory.GetId());
+      Assert.Equal(testInventory, foundInventory);
     }
     public void Dispose()
     {

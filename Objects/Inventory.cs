@@ -104,6 +104,37 @@ namespace Inventory
       }
       return allInventories;
     }
+    public static Inventory Find(int id)
+    {
+      SqlConnection conn = DB.Connection();
+      conn.Open();
 
+      SqlCommand cmd = new SqlCommand("SELECT * FROM inventory WHERE id = @InventoryId", conn);
+      SqlParameter inventoryIdParameter = new SqlParameter();
+      inventoryIdParameter.ParameterName = "@InventoryId";
+      inventoryIdParameter.Value = id.ToString();
+      cmd.Parameters.Add(inventoryIdParameter);
+      SqlDataReader rdr = cmd.ExecuteReader();
+
+      int foundInventoryId = 0;
+      string foundInventoryDescription = null;
+      while(rdr.Read())
+      {
+        foundInventoryId = rdr.GetInt32(0);
+        foundInventoryDescription = rdr.GetString(1);
+      }
+      Inventory foundInventory = new Inventory(foundInventoryDescription, foundInventoryId);
+
+      if (rdr != null)
+     {
+       rdr.Close();
+     }
+     if (conn != null)
+     {
+       conn.Close();
+     }
+
+     return foundInventory;
+    }
   }
 }
