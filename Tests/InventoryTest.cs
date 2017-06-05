@@ -6,7 +6,7 @@ using System.Data.SqlClient;
 
 namespace Inventory
 {
-  public class InventoryTest
+  public class InventoryTest : IDisposable
   {
     public InventoryTest()
     {
@@ -17,6 +17,49 @@ namespace Inventory
     {
       int result = Inventory.GetAll().Count;
       Assert.Equal(0, result);
+    }
+    [Fact]
+    public void Test_Equal_ReturnsTrueIfBeersAreTheSame()
+    {
+      //Arrange, Act
+      Inventory firstInventory = new Inventory("Bud");
+      Inventory secondInventory = new Inventory("Bud");
+
+      //Assert
+      Assert.Equal(firstInventory, secondInventory);
+    }
+    [Fact]
+    public void Test_Save_SaveToDatabase()
+    {
+      //Arrange
+      Inventory testInventory = new Inventory("Coors");
+
+      //Act
+      testInventory.Save();
+      List<Inventory> result = Inventory.GetAll();
+      List<Inventory> testList = new List<Inventory>{testInventory};
+
+      //Assert
+      Assert.Equal(testList, result);
+    }
+    [Fact]
+    public void Test_Save_AssignsIdToObject()
+    {
+      //Arrange
+      Inventory testInventory = new Inventory("Rise Up Red");
+
+      //Act
+      testInventory.Save();
+      Inventory savedInventory = Inventory.GetAll()[0];
+      int result = savedInventory.GetId();
+      int testId = testInventory.GetId();
+
+      //Assert
+      Assert.Equal(testId, result);
+    }
+    public void Dispose()
+    {
+      Inventory.DeleteAll();
     }
   }
 }
@@ -47,12 +90,4 @@ namespace Inventory
 //   Inventory newInventory = new Inventory("Bud", "garbage", 12);
 //
 //   Assert.Equal(newInventory.Inventory("Bud", "garbage", 12), result);
-// }
-
-
-
-
-// public void Dispose()
-// {
-//   Task.DeleteAll();
 // }

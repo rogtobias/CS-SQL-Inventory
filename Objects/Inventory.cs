@@ -8,11 +8,53 @@ namespace Inventory
   {
     private string _beerName;
     private int _id;
+    private static List<Inventory> _instances = new List<Inventory>();
 
     public Inventory(string beerName, int Id = 0)
     {
       _beerName = beerName;
       _id = Id;
+
+    }
+    public override bool Equals(System.Object otherInventory)
+    {
+      if (!(otherInventory is Inventory))
+      {
+        return false;
+      }
+      else
+      {
+        Inventory newInventory = (Inventory) otherInventory;
+        bool idEquality = (this.GetId() == newInventory.GetId());
+        bool descriptionEquality = (this.GetBeerName() == newInventory.GetBeerName());
+        return (idEquality && descriptionEquality);
+      }
+    }
+    public void Save()
+    {
+      SqlConnection conn = DB.Connection();
+      conn.Open();
+
+      SqlCommand cmd = new SqlCommand("INSERT INTO inventory (beerName) OUTPUT INSERTED.id VALUES (@InventoryBeerName);", conn);
+
+      SqlParameter descriptionParameter = new SqlParameter();
+      descriptionParameter.ParameterName = "@InventoryBeerName";
+      descriptionParameter.Value = this.GetBeerName();
+      cmd.Parameters.Add(descriptionParameter);
+      SqlDataReader rdr = cmd.ExecuteReader();
+
+      while(rdr.Read())
+      {
+        this._id = rdr.GetInt32(0);
+      }
+      if(rdr != null)
+      {
+        rdr.Close();
+      }
+      if(conn != null)
+      {
+        conn.Close();
+      }
     }
     public string GetBeerName()
     {
@@ -25,6 +67,14 @@ namespace Inventory
     public int GetId()
     {
       return _id;
+    }
+    public static void DeleteAll()
+    {
+      SqlConnection conn = DB.Connection();
+      conn.Open();
+      SqlCommand cmd = new SqlCommand("DELETE FROM Inventory;", conn);
+      cmd.ExecuteNonQuery();
+      conn.Close();
     }
     public static List<Inventory> GetAll()
     {
